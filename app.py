@@ -15,8 +15,10 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Configuration
-CHROMA_DB_DIR = Path(__file__).parent / "chroma_db"
+# Configuration - use absolute path resolution
+APP_DIR = Path(__file__).resolve().parent
+CHROMA_DB_DIR = APP_DIR / "chroma_db"
+EXTRACTED_IMAGES_DIR = APP_DIR / "extracted_images"
 NUM_RESULTS = 5  # Number of chunks to retrieve
 
 # Page config
@@ -146,8 +148,11 @@ def main():
 
     # Check if database exists
     if collection is None:
-        st.error("⚠️ Product database not found. Please run `python ingest.py` first to index the PDFs.")
-        st.code("cd customer-qa-app && python ingest.py", language="bash")
+        st.error("⚠️ Product database not found.")
+        st.info(f"Looking for database at: {CHROMA_DB_DIR}")
+        st.info(f"Directory exists: {CHROMA_DB_DIR.exists()}")
+        if CHROMA_DB_DIR.exists():
+            st.info(f"Contents: {list(CHROMA_DB_DIR.iterdir())}")
         return
 
     # Check if API key is set
@@ -158,8 +163,7 @@ def main():
 
     # Show collection stats
     count = collection.count()
-    images_dir = Path(__file__).parent / "extracted_images"
-    image_count = len(list(images_dir.glob("*.png"))) if images_dir.exists() else 0
+    image_count = len(list(EXTRACTED_IMAGES_DIR.glob("*.png"))) if EXTRACTED_IMAGES_DIR.exists() else 0
 
     st.sidebar.markdown("**📊 Database Stats**")
     st.sidebar.markdown(f"Indexed chunks: {count}")
