@@ -44,20 +44,21 @@ st.markdown("""
 def init_chromadb():
     """Initialize ChromaDB client and collection."""
     if not CHROMA_DB_DIR.exists():
+        st.error(f"ChromaDB directory not found: {CHROMA_DB_DIR}")
         return None
 
-    client = chromadb.PersistentClient(path=str(CHROMA_DB_DIR))
-    embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name="all-MiniLM-L6-v2"
-    )
-
     try:
+        client = chromadb.PersistentClient(path=str(CHROMA_DB_DIR))
+        embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
+            model_name="all-MiniLM-L6-v2"
+        )
         collection = client.get_collection(
             name="customer_products",
             embedding_function=embedding_fn
         )
         return collection
-    except:
+    except Exception as e:
+        st.error(f"ChromaDB error: {type(e).__name__}: {e}")
         return None
 
 
