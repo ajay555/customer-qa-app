@@ -1,6 +1,7 @@
-streamlit
-anthropic
-chromadb
-sentence-transformers
+streamlit>=1.32.0
+anthropic>=0.20.0
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
 python-dotenv
 Pillow
+pydantic>=2.0.0
